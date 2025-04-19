@@ -90,6 +90,7 @@ async fn main() {
         }
     });
 
+    // TODO: delay startup to align exactly with :00
     loop{
         // if the watcher indicates a reload is needed, refresh the task definitions
         if reload_flag_main.load(Ordering::Relaxed){
@@ -122,7 +123,7 @@ async fn main() {
             }
         }
 
-        // sleep for 60 seconds
+        // sleep for 60 seconds (set to 10 right now to debug more easily)
         tokio::time::sleep(Duration::from_secs(10)).await;
     }
 }
