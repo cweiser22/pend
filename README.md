@@ -1,7 +1,7 @@
-# Rust Task Scheduler
+# `pend`: a Rust Task Scheduler
 
 This project is a simple cron-like task scheduler written in Rust. It allows users to
-define, via json files, basic commands composed of an excutable and `n` arguments.
+define, via json files, basic commands composed of an executable and `n` arguments.
 
 ## Main executable
 The main executable runs in a 24/7 loop, evaluating every 60 seconds if any tasks need
