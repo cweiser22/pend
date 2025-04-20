@@ -5,6 +5,7 @@ use std::path::Path;
 use std::fs;
 use std::process::Command;
 use std::sync::Arc;
+use std::env;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::channel;
 use std::time::Duration;
@@ -45,6 +46,7 @@ fn load_task_definitions(task_dir: &str) -> Vec<TaskDefinition>{
             },
             Err(error) => log::warn!("Failed to read {:?}: {:?}", path, error)
         }
+
     }
     task_definitions
 }
@@ -56,7 +58,34 @@ async fn main() {
     env_logger::init();
 
     log::info!("Started tasks scheduler daemon.");
-    let task_dir = "./dev_configs";
+
+    let mut task_dir: String;
+
+    // TODO: maybe just use a function with cfg to do this
+    if cfg!(target_os="windows"){
+        // pass
+        task_dir = String::new();
+    } else if cfg!(target_os = "macos"){
+        task_dir = String::from("~/Library/Application Support/pend/tasks");
+    } else if cfg!(target_os = "linux"){
+        // pass
+        task_dir = String::new();
+    } else {
+        panic!("Unrecognized operating system");
+    }
+
+    match env::var("PEND_TASK_DIR"){
+        Ok(value) => {
+            task_dir = value;
+        },
+        Err(_) => {
+
+        }
+    }
+
+
+
+
 
     // copy task_dir so the watcher can take ownership
     let watch_dir = task_dir.clone();
@@ -70,13 +99,15 @@ async fn main() {
     let mut task_definitions: Vec<TaskDefinition> = load_task_definitions(&task_dir);
     let (tx, rx) = channel();
 
+    let task_dir_clone = task_dir.clone();
+
     task::spawn(async move {
         log::info!("Watching task dir {}", watch_dir);
 
         // TODO: make this more resilient, i.e. program should still work with a broken watcher
         let mut watcher = recommended_watcher(tx)
             .expect("Failed to set up watcher");
-        watcher.watch(Path::new(task_dir), RecursiveMode::Recursive).expect("Watcher failed");
+        watcher.watch(Path::new(&task_dir_clone), RecursiveMode::Recursive).expect("Watcher failed");
 
         loop{
             match rx.recv(){

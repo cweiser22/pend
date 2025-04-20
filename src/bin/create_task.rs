@@ -1,7 +1,7 @@
 use std::fs::OpenOptions;
 use std::io::Write;
 use clap::Parser;
-use task_scheduler::task_definition;
+use pend::task_definition;
 use ulid::Ulid;
 
 #[derive(Parser, Debug)]

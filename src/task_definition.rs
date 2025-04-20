@@ -21,9 +21,13 @@ impl TaskDefinition{
         let exec = self.exec.clone();
         let args = self.args.clone();
         task::spawn(async {
-            let output = Command::new(exec).args(args).output()
-                .expect("Failed to run tasks");
-            //log::info!("{:?}", output);
+            let output = Command::new(exec).args(args).output();
+
+            match output{
+                Ok(out) => log::debug!("stdout {:?}, stderr {:?}",String::from_utf8(out.stdout),
+                    String::from_utf8(out.stderr)),
+                Err(error) => log::debug!("{:?}", error)
+            }
         });
     }
 
