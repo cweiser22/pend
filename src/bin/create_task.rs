@@ -34,5 +34,4 @@ fn main() {
         .expect("Could not create new task definition file");
 
     file.write_all(json_str.as_bytes()).expect("Failed to create task");
-
 }

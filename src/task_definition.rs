@@ -3,16 +3,11 @@ use serde::{Serialize, Deserialize};
 use tokio::task;
 use crate::task_definition;
 
-fn complete_default() -> bool{
-    true
-}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TaskDefinition{
     pub exec: String,
     pub args: Vec<String>,
-    #[serde(default="complete_default")]
-    pub complete: bool,
     pub cron_expr: String
 }
 
@@ -35,8 +30,7 @@ impl TaskDefinition{
         TaskDefinition{
             exec,
             args,
-            cron_expr,
-            complete: false
+            cron_expr
         }
     }
 

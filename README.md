@@ -1,18 +1,52 @@
-# `pend`: a Rust Task Scheduler
+# 🕒 `pend`: A Rust Task Scheduler
 
-This project is a simple cron-like task scheduler written in Rust. It allows users to
-define, via json files, basic commands composed of an executable and `n` arguments.
+[![Rust](https://img.shields.io/badge/language-Rust-orange)](https://www.rust-lang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Main executable
-The main executable runs in a 24/7 loop, evaluating every 60 seconds if any tasks need
-to be fired off. The tasks are loaded from a pre-defined directory of JSON task definitions,
-and a file watcher that runs in the background will refresh the task definitions if any changes
-to the task directory are detected.
+A lightweight, efficient cron-like task scheduler written in Rust. `pend` allows you to define tasks via simple JSON files, with each task consisting of an executable and its arguments.
 
-## Secondary executables
+## ✨ Features
 
-### Create Task
+- 🔄 Continuous operation with 60-second evaluation intervals
+- 📁 JSON-based task definitions
+- 👀 File watching for automatic task reloading
+- 🚀 Simple and efficient execution model
 
-#### Usage (dev)
-`cargo run --bin create_task -- <cron_expr> <executable> [<args>...]`
+## 🏗️ Architecture
 
+### 🔍 Main Executable
+
+The core scheduler runs in a persistent loop, checking every 60 seconds for tasks that need to be executed. It:
+
+- Loads task definitions from a configured directory
+- Maintains a file watcher to detect changes to task definitions
+- Automatically refreshes the task list when changes are detected
+- Executes tasks as scheduled
+
+### 🛠️ Utility Tools
+
+#### Create Task
+
+A companion utility to easily define new scheduled tasks.
+
+##### Usage (Development)
+
+```bash
+cargo run --bin create_task -- <cron_expr> <executable> [<args>...]
+```
+
+## 🚀 Getting Started
+
+_todo..._
+
+## 📚 Documentation
+
+_todo..._
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📜 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
