@@ -3,16 +3,11 @@ use serde::{Serialize, Deserialize};
 use tokio::task;
 use crate::task_definition;
 
-fn complete_default() -> bool{
-    true
-}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TaskDefinition{
     pub exec: String,
     pub args: Vec<String>,
-    #[serde(default="complete_default")]
-    pub complete: bool,
     pub cron_expr: String
 }
 
@@ -21,9 +16,13 @@ impl TaskDefinition{
         let exec = self.exec.clone();
         let args = self.args.clone();
         task::spawn(async {
-            let output = Command::new(exec).args(args).output()
-                .expect("Failed to run tasks");
-            //log::info!("{:?}", output);
+            let output = Command::new(exec).args(args).output();
+
+            match output{
+                Ok(out) => log::debug!("stdout {:?}, stderr {:?}",String::from_utf8(out.stdout),
+                    String::from_utf8(out.stderr)),
+                Err(error) => log::debug!("{:?}", error)
+            }
         });
     }
 
@@ -31,8 +30,7 @@ impl TaskDefinition{
         TaskDefinition{
             exec,
             args,
-            cron_expr,
-            complete: false
+            cron_expr
         }
     }
 

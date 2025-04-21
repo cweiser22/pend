@@ -1,7 +1,7 @@
 use std::fs::OpenOptions;
 use std::io::Write;
 use clap::Parser;
-use task_scheduler::task_definition;
+use pend::task_definition;
 use ulid::Ulid;
 
 #[derive(Parser, Debug)]
@@ -34,5 +34,4 @@ fn main() {
         .expect("Could not create new task definition file");
 
     file.write_all(json_str.as_bytes()).expect("Failed to create task");
-
 }
