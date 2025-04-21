@@ -1,9 +1,10 @@
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 
-pub(crate) fn load_tasks_from_fs(task_dir: &str) -> Vec<String>{
+
+pub fn load_tasks_from_fs(task_dir: &PathBuf) -> Vec<String>{
     let mut task_definition_paths: Vec<String> = vec![];
     let task_path = Path::new(task_dir);
     for entry in fs::read_dir(task_path).unwrap(){
@@ -19,4 +20,18 @@ pub(crate) fn load_tasks_from_fs(task_dir: &str) -> Vec<String>{
         }
     }
     task_definition_paths
+}
+
+pub fn check_cron_field<F>(x: &str, f: F) -> bool where F: Fn(u32) -> bool{
+    if x == "*"{
+        true
+    } else {
+        match x.parse::<u32>(){
+            Ok(n) => f(n),
+            Err(e) => {
+                log::warn!("Failed to parse u32 in cron_expr");
+                false
+            }
+        }
+    }
 }
