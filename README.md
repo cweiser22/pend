@@ -12,27 +12,42 @@ A lightweight, efficient cron-like task scheduler written in Rust. `pend` allows
 - 👀 File watching for automatic task reloading
 - 🚀 Simple and efficient execution model
 
-## 🏗️ Architecture
+## 🏗️ Project Structure
 
-### 🔍 Main Executable
+The project is organized into multiple crates:
 
-The core scheduler runs in a persistent loop, checking every 60 seconds for tasks that need to be executed. It:
+- 📦 `pend-core` - Core library containing shared functionality
+- 🖥️ `pend-daemon` - Background service to run tasks
+- 🔧 `pend-cli` - Command-line interface for managing tasks
+
+## 🛠️ Components
+
+### 🔍 Daemon (`pend-daemon`)
+
+The daemon runs as a persistent service, checking every 60 seconds for tasks that need to be executed. It:
 
 - Loads task definitions from a configured directory
 - Maintains a file watcher to detect changes to task definitions
 - Automatically refreshes the task list when changes are detected
 - Executes tasks as scheduled
 
-### 🛠️ Utility Tools
+### 💻 CLI (`pend-cli`)
 
-#### Create Task
+A unified command-line interface that provides all management functionality:
 
-A companion utility to easily define new scheduled tasks.
+- TODO
 
-##### Usage (Development)
+#### Usage
 
 ```bash
-cargo run --bin create_task -- <cron_expr> <executable> [<args>...]
+# Create a new task
+pend task create <cron_expr> <executable> [<args>...]
+
+# List all tasks
+pend task list
+
+# Get daemon status
+pend daemon status
 ```
 
 ## 🚀 Getting Started

@@ -1,21 +1,34 @@
+use clap::{Parser, Subcommand};
+use pend_core::{TaskDefinition};
 use std::fs::OpenOptions;
 use std::io::Write;
-use clap::Parser;
-use pend::task_definition;
 use ulid::Ulid;
 
-#[derive(Parser, Debug)]
-struct Args{
-    cron_expr: String,
-    exec: String,
-    #[clap(last=true)]
-    exec_args: Vec<String>
+#[derive(Parser)]
+#[command(name = "pend-cli")]
+#[command(about = "A multi-binary CLI", long_about = None)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
 }
 
-fn main() {
-    let args = Args::parse();
-    let td = task_definition::TaskDefinition::new(args.exec, args.exec_args, args.cron_expr);
+#[derive(Subcommand, Debug)]
+enum Commands {
+    CreateTask(CreateTaskArgs),
+}
+
+#[derive(Parser, Debug)]
+struct CreateTaskArgs {
+    cron_expr: String,
+    exec: String,
+    #[arg(last = true)]
+    exec_args: Vec<String>,
+}
+
+fn create_task(args: CreateTaskArgs) {
+    let td = TaskDefinition::new(args.exec, args.exec_args, args.cron_expr);
     let json_str : String;
+
 
     // TODO: input validation for cron_expr
 
@@ -34,4 +47,12 @@ fn main() {
         .expect("Could not create new task definition file");
 
     file.write_all(json_str.as_bytes()).expect("Failed to create task");
+}
+
+fn main() {
+    let cli = Cli::parse();
+
+    match cli.command {
+        Commands::CreateTask(args) => create_task(args),
+    }
 }

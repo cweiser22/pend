@@ -11,45 +11,26 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::channel;
 use std::time::Duration;
 use chrono::{Datelike, Local, Timelike};
-use directories::ProjectDirs;
 use notify::{recommended_watcher, RecursiveMode, Watcher};
 use tokio::task;
-use crate::task_definition::TaskDefinition;
+use pend_core::{TaskDefinition, get_tasks_dir};
 
-pub mod utils;
-pub mod task_definition;
+mod utils;
 
-use utils::{check_cron_field};
+use utils::{check_cron_field, load_task_definitions};
 
+fn launch_task(td: &TaskDefinition){
+    let exec = td.exec.clone();
+    let args = td.args.clone();
+    task::spawn(async {
+        let output = Command::new(exec).args(args).output();
 
-fn load_task_definitions(task_dir: &PathBuf) -> Vec<TaskDefinition>{
-    let task_definition_paths = utils::load_tasks_from_fs(task_dir);
-    let mut task_definitions: Vec<task_definition::TaskDefinition> = vec![];
-
-    for path in task_definition_paths{
-        let contents = fs::read_to_string(task_dir.join(&path));
-        match contents{
-            Ok(json) => {
-                match TaskDefinition::from_json(&json){
-                    Ok(td) => task_definitions.push(td),
-                    Err(error) => log::warn!("Failed to parse {:?}: {:?}", path.to_string(), error)
-                }
-            },
-            Err(error) => log::warn!("Failed to read {:?}: {:?}", path.to_string(), error)
+        match output{
+            Ok(out) => log::debug!("stdout {:?}, stderr {:?}",String::from_utf8(out.stdout),
+                    String::from_utf8(out.stderr)),
+            Err(error) => log::debug!("{:?}", error)
         }
-
-    }
-    task_definitions
-}
-
-// compute the task dir
-fn get_tasks_dir(proj_dirs: ProjectDirs) -> PathBuf{
-    if let Ok(value) = env::var("PEND_TASK_DIR"){
-        return Path::new(&value).to_path_buf();
-    }
-    let tasks_dir = proj_dirs.data_dir().join("tasks");
-    fs::create_dir_all(&tasks_dir).expect("Failed to create tasks dir");
-    tasks_dir
+    });
 }
 
 // multi_thread to enable parallelism
@@ -58,10 +39,7 @@ async fn main() {
     // initialize logging
     env_logger::init();
 
-    let proj_dirs = ProjectDirs::from("com", "example",
-                                      "pend").expect("Failed to open config dirs");
-
-    let tasks_dir = get_tasks_dir(proj_dirs);
+    let tasks_dir = get_tasks_dir();
 
     log::info!("Started tasks scheduler daemon.");
 
@@ -124,7 +102,7 @@ async fn main() {
 
                     if m_match && h_match && d_match && mo_match && w_match{
                         log::info!("Firing off task...");
-                        td.launch();
+                        launch_task(&td);
                     }
                 },
                 _ => {
