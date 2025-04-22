@@ -9,6 +9,7 @@ use directories::{ProjectDirs};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TaskDefinition{
+    //pub name: String,
     pub exec: String,
     pub args: Vec<String>,
     pub cron_expr: String
@@ -16,11 +17,12 @@ pub struct TaskDefinition{
 
 
 impl TaskDefinition{
-    pub fn new(exec: String, args: Vec<String>, cron_expr: String) -> TaskDefinition {
+    pub fn new(exec: String, args: Vec<String>, cron_expr: String, name: String) -> TaskDefinition {
         TaskDefinition{
             exec,
             args,
-            cron_expr
+            cron_expr,
+            //name
         }
     }
 

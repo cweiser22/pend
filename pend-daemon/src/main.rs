@@ -112,6 +112,6 @@ async fn main() {
         }
 
         // sleep for 60 seconds (set to 10 right now to debug more easily)
-        tokio::time::sleep(Duration::from_secs(10)).await;
+        tokio::time::sleep(Duration::from_secs(60)).await;
     }
 }

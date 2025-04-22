@@ -41,13 +41,10 @@ A unified command-line interface that provides all management functionality:
 
 ```bash
 # Create a new task
-pend task create <cron_expr> <executable> [<args>...]
+pend-cli create-task -n <task_name> | --name <task_name> [--edit]
 
-# List all tasks
-pend task list
-
-# Get daemon status
-pend daemon status
+# Edit an existing task
+pend-cli edit-task -n <task_name> | --name <task_name>
 ```
 
 ## 🚀 Getting Started
