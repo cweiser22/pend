@@ -57,6 +57,11 @@ async fn main() {
 
     let tasks_dir_clone = tasks_dir.clone();
 
+    // offset so that we run very close to :00
+    let offset = utils::calculate_time_offset();
+    log::info!("Launching in {} seconds...", offset);
+    tokio::time::sleep(Duration::from_secs(utils::calculate_time_offset())).await;
+
     task::spawn(async move {
         log::info!("Watching task dir {:?}", watch_dir);
 
@@ -76,6 +81,8 @@ async fn main() {
             }
         }
     });
+
+    //
 
     // TODO: delay startup to align exactly with :00
     loop{

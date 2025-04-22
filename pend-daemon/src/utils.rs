@@ -1,6 +1,17 @@
 use std::{fs};
 use std::path::{Path, PathBuf};
 use pend_core::TaskDefinition;
+use chrono::{Local, Timelike};
+
+// returns the amount of time between now and the beginning of the next minute
+pub fn calculate_time_offset() -> u64 {
+    let now = Local::now();
+    let seconds = now.second();
+    let nanos = now.nanosecond();
+
+    let secs_until_next = 60 - seconds - if nanos > 0 { 1 } else { 0 };
+    secs_until_next as u64
+}
 
 // TODO: consider merging this into load_task_definition
 fn load_tasks_from_fs(task_dir: &PathBuf) -> Vec<String>{

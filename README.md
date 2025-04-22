@@ -10,11 +10,11 @@ A lightweight, efficient cron-like task scheduler written in Rust. `pend` allows
 - 🔄 Continuous operation with 60-second evaluation intervals
 - 📁 JSON-based task definitions
 - 👀 File watching for automatic task reloading
-- 🚀 Simple and efficient execution model
+- ⚡ Launches tasks in parallel with Tokio's `multi_thread` runtime
 
 ## 🏗️ Project Structure
 
-The project is organized into multiple crates:
+The project is organized into three crates:
 
 - 📦 `pend-core` - Core library containing shared functionality
 - 🖥️ `pend-daemon` - Background service to run tasks
@@ -46,14 +46,6 @@ pend-cli create-task -n <task_name> | --name <task_name> [--edit]
 # Edit an existing task
 pend-cli edit-task -n <task_name> | --name <task_name>
 ```
-
-## 🚀 Getting Started
-
-_todo..._
-
-## 📚 Documentation
-
-_todo..._
 
 ## 🤝 Contributing
 
