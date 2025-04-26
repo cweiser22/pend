@@ -4,7 +4,6 @@ mod editor;
 mod delete;
 
 use clap::{Parser, Subcommand};
-use std::io::Write;
 
 #[derive(Parser)]
 #[command(name = "pend-cli")]

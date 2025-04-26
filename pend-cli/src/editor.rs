@@ -1,8 +1,7 @@
 use std::path::PathBuf;
-use std::process::Command;
+use std::process::{Command, exit};
 
 pub fn open_editor(task_path: PathBuf){
-    // TODO: make this configurable
     let editor = "vi";
 
     let status = Command::new(editor)
@@ -11,7 +10,8 @@ pub fn open_editor(task_path: PathBuf){
         .expect("failed to launch editor");
 
     if !status.success() {
-        panic!("Editor exited with error");
+        eprintln!("Editor exited with error code: {}", status);
+        exit(1);
     }
 
 }

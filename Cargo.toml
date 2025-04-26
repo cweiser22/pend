@@ -4,3 +4,4 @@ members = [
     "pend-core",
     "pend-daemon"
 ]
+resolver = "3"

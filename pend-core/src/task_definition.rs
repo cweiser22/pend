@@ -10,12 +10,11 @@ pub struct TaskDefinition{
 
 
 impl TaskDefinition {
-    pub fn new(exec: String, args: Vec<String>, cron_expr: String, name: String) -> TaskDefinition {
+    pub fn new(exec: String, args: Vec<String>, cron_expr: String) -> TaskDefinition {
         TaskDefinition {
             exec,
             args,
             cron_expr,
-            //name
         }
     }
 
