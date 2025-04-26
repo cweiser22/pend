@@ -1,5 +1,6 @@
 use std::{env, fs};
 use std::path::{Path, PathBuf};
+use std::process::exit;
 use directories::ProjectDirs;
 
 pub fn get_tasks_dir() -> PathBuf{
@@ -9,6 +10,9 @@ pub fn get_tasks_dir() -> PathBuf{
         return Path::new(&value).to_path_buf();
     }
     let tasks_dir = proj_dirs.data_dir().join("tasks");
-    fs::create_dir_all(&tasks_dir).expect("Failed to create tasks dir");
+    if let Err(e) = fs::create_dir_all(&tasks_dir){
+        eprintln!("Failed to create tasks dir: {}", e);
+        exit(1);
+    };
     tasks_dir
 }

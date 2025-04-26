@@ -6,12 +6,19 @@ pub fn open_editor(task_path: PathBuf){
 
     let status = Command::new(editor)
         .arg(&task_path)
-        .status()
-        .expect("failed to launch editor");
+        .status();
 
-    if !status.success() {
-        eprintln!("Editor exited with error code: {}", status);
-        exit(1);
+
+    match status{
+        Ok(status) => {
+            if !status.success() {
+                eprintln!("Editor exited with error code: {}", status);
+                exit(1);
+            }
+        },
+        Err(e) => {
+            eprintln!("Could not launch editor: {}", e);
+            exit(1);
+        }
     }
-
 }
