@@ -18,14 +18,9 @@ pub fn delete_task_command(args: DeleteTaskArgs){
         eprintln!("Cannot delete {} as it does not exist.", args.name);
         exit(1);
     } else {
-        match fs::remove_file(filename){
-            Ok(_) => {
-                println!("Task deleted.");
-            },
-            Err(e) => {
-                eprintln!("Failed to delete task: {}", e);
-                exit(1);
-            }
-        }
+        fs::remove_file(filename).unwrap_or_else(|e| {
+            eprintln!("Failed to delete task: {}", e);
+            exit(1);
+        });
     }
 }
