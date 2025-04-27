@@ -35,8 +35,6 @@ The daemon runs as a persistent service, checking every 60 seconds for tasks tha
 
 A unified command-line interface that provides all management functionality:
 
-- TODO
-
 #### Usage
 
 ```bash
