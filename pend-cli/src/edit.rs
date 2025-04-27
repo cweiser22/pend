@@ -8,10 +8,8 @@ pub struct EditTaskArgs {
     /// Name of the task
     #[arg(short = 'n', long = "name")]
     pub name: String,
-    /// Open the task for editing after creation
-    #[arg(long = "edit")]
-    edit: bool,
 }
+
 
 pub fn edit_task_command(args: EditTaskArgs){
     let tasks_dir = get_tasks_dir();
