@@ -11,11 +11,11 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::channel;
 use std::time::Duration;
 use chrono::{Datelike, Local, Timelike};
-use notify::{recommended_watcher, RecursiveMode, Watcher};
 use tokio::task;
 use pend_core::{TaskDefinition, get_tasks_dir};
 
 mod utils;
+mod watcher;
 
 use utils::{check_cron_field, load_task_definitions};
 
@@ -53,38 +53,22 @@ async fn main() {
     let reload_flag_watcher = Arc::clone(&reload_flag);
 
     let mut task_definitions: Vec<TaskDefinition> = load_task_definitions(&tasks_dir);
-    let (tx, rx) = channel();
+    
 
     let tasks_dir_clone = tasks_dir.clone();
+
+    task::spawn(async move {
+        loop {
+            watcher::start_watcher(&tasks_dir_clone, &reload_flag_watcher);
+            log::warn!("Watcher stopped running. Restarting...")
+        }
+    });
 
     // offset so that we run very close to :00
     let offset = utils::calculate_time_offset();
     log::info!("Launching in {} seconds...", offset);
     tokio::time::sleep(Duration::from_secs(utils::calculate_time_offset())).await;
 
-    task::spawn(async move {
-        log::info!("Watching task dir {:?}", watch_dir);
-
-        // TODO: make this more resilient, i.e. program should still work with a broken watcher
-        let mut watcher = recommended_watcher(tx)
-            .expect("Failed to set up watcher");
-        watcher.watch(Path::new(&tasks_dir_clone), RecursiveMode::Recursive).expect("Watcher failed");
-
-        loop{
-            match rx.recv(){
-                Ok(_) => {
-                    log::debug!("Change detected, marking reload...");
-                    reload_flag_watcher.store(true, Ordering::Relaxed)
-                },
-
-                Err(_) => {} // TODO
-            }
-        }
-    });
-
-    //
-
-    // TODO: delay startup to align exactly with :00
     loop{
         // if the watcher indicates a reload is needed, refresh the task definitions
         if reload_flag_main.load(Ordering::Relaxed){
